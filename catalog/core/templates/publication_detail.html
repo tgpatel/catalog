@@ -2,15 +2,89 @@
 {% load bootstrap3 %}
 
 {% block content %}
-    <div cass="row">
-        <form method="post" class="col-md-4" role="form">
-            <h2>Publication</h2>
-            {% bootstrap_form form %}
-            {% buttons %}
-            <button type="submit" class="btn btn-primary">
-               <i class="fa fa-floppy-o"></i> Save
-            </button>
-            {% endbuttons %}
-        </form>
-    </div>
-{% endblock content %}
+    <div cass="row"></div>
+{% endblock content%}
+
+{% block javascript %}
+
+<script src="{{STATIC_URL}}js/react-select.min.js"></script>
+<script type="text/jsx">
+    var viewModelJson = $.parseJSON("{{ json | escapejs }}");
+    var options = [
+        { value: 'one', label: 'One' },
+        { value: 'two', label: 'Two' }
+    ];
+    var Form = React.createClass({
+        renderTextInput: function(klass, id, label, value) {
+            return <div className={klass}>
+                <label className="control-label" htmlFor={id}>{label}</label>
+                <input className="form-control" id= {id} name={id} type="text" placeholder={label} defaultValue={value} />
+            </div>
+          },
+        renderTextArea: function(klass, id, label, value) {
+            return <div className={klass}>
+                <label className="control-label" htmlFor={id}>{label}</label>
+                <textarea className="form-control" id={id} name={id} defaultValue={value} rows="3"></textarea>
+            </div>
+          },
+        render: function() {
+            return (
+                <div className="row">
+                    <form method="post" role="form">
+                        <h2>Publication</h2>
+                        {this.renderTextInput('col-md-12','title', 'Title', this.props.data.title)}
+                        {this.renderTextArea('col-md-12','abstract', 'Abstract', this.props.data.abstract)}
+                        {this.renderTextInput('col-md-12','short_title', 'Short Title', this.props.data.short_title)}
+                        {this.renderTextInput('col-md-4','url', 'Url', this.props.data.url)}
+                        {this.renderTextInput('col-md-4','date_published', 'Date Published', this.props.data.date_published)}
+                        {this.renderTextInput('col-md-4','date_accessed', 'Date Accessed', this.props.data.date_accessed)}
+                        {this.renderTextInput('col-md-4','archive', 'Archive', this.props.data.archive)}
+                        {this.renderTextInput('col-md-4','archive_location', 'Archive Location', this.props.data.archive_location)}
+                        {this.renderTextInput('col-md-4','library_catalog', 'Library Catalog', this.props.data.library_catalog)}
+                        {this.renderTextInput('col-md-4','call_number', 'Call Number', this.props.data.call_number)}
+                        {this.renderTextInput('col-md-4','rights', 'Rights', this.props.data.rights)}
+                        {this.renderTextInput('col-md-4','extra', 'Extra', this.props.data.extra)}
+                        {this.renderTextInput('col-md-4','published_language', 'Published Language', this.props.data.published_language)}
+                        
+                        <div className="col-md-4">
+                            <label className="control-label" htmlFor="id_status">Status</label>
+                            <select className="form-control" id="id_status" name="status" defaultValue={this.props.data.status}>
+                                <option value="UNTAGGED">Publication has not been curated or tagged yet</option>
+                                <option value="INCOMPLETE">Curator has finished processing publication with no archive URL</option>
+                                <option value="INVALID_URL">Curator has finished processing publication with invalid archive URL</option>
+                                <option value="AUTHOR_UPDATED">Archive URL updated by author, needs curator review</option>
+                                <option value="COMPLETE">Archive URL has been reviewed and verified</option>
+                            </select>
+                        </div>
+
+                        {this.renderTextInput('col-md-4','code_archive_url', 'Code Archive Url', this.props.data.code_archive_url)}
+                        {this.renderTextInput('col-md-4','contact_email', 'Contact Email', this.props.data.contact_email)}
+                        {this.renderTextInput('col-md-4','pages', 'Pages', this.props.data.pages)}
+                        {this.renderTextInput('col-md-4','issn', 'Issn', this.props.data.issn)}
+                        {this.renderTextInput('col-md-4','volume', 'Volume', this.props.data.volume)}
+                        {this.renderTextInput('col-md-4','issue', 'Issue', this.props.data.issue)}
+                        {this.renderTextInput('col-md-4','series', 'Series', this.props.data.series)}
+                        {this.renderTextInput('col-md-4','series_title', 'Series Title', this.props.data.series_title)}
+                        {this.renderTextInput('col-md-4','series_text', 'Series Text', this.props.data.series_text)}
+                        {this.renderTextInput('col-md-4','doi', 'DOI', this.props.data.doi)}
+
+                        <Select name="form-field-name" value="one" options={options} />
+
+                        <div className="col-md-12">
+                            <button type="button" className="btn btn-primary"><i className="fa fa-floppy-o"></i> Save</button>
+                        </div> 
+                    </form>
+                </div>
+            );
+        }
+    });
+
+    $(document).ready(function() {
+        React.render(
+            <Form data={viewModelJson} />,
+            document.getElementById('content')
+        );
+    });
+</script>
+
+{% endblock javascript %}

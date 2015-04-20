@@ -133,12 +133,8 @@ class PublicationDetail(LoginRequiredMixin, APIView):
 
     def get(self, request, pk, format=None):
         publication = self.get_object(pk)
-        # FIXME: make this part more rest friendly
-        if request.accepted_renderer.format == 'html':
-            form = JournalArticleDetailForm(instance=publication)
-            return Response({'form': form}, template_name='publication_detail.html')
         serializer = JournalArticleSerializer(publication)
-        return Response(serializer.data)
+        return Response({'json': dumps(serializer.data)}, template_name='publication_detail.html')
 
 
 class EmailPreview(LoginRequiredMixin, APIView):
